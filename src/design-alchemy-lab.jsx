@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import DesignAlchemyLab from './design-alchemy-app.js'; // <- use the actual filename (case-sensitive)
+import DesignAlchemyLab from './design-alchemy-lab.jsx'; // import the component file (match exact name/case)
 
 const root = createRoot(document.getElementById('root'));
 root.render(
@@ -8,5 +8,3 @@ root.render(
     <DesignAlchemyLab />
   </React.StrictMode>
 );
-  );
-}
