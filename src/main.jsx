@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import DesignAlchemyLab from './design-alchemy-app.js'; // adjust filename/path if needed
+import DesignAlchemyLab from './design-alchemy-lab.jsx'; // import the consolidated component file
 
 console.log('main.jsx loaded');
 
@@ -15,7 +15,6 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // log stack to console (Vercel / browser console)
     console.error('ErrorBoundary caught error:', error);
     console.error(info);
     this.setState({ info });
