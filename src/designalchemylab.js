@@ -1,4 +1,3 @@
-```javascript
 import React, { useState, useEffect } from 'react';
 import { ArrowDown } from 'lucide-react';
 
@@ -13,9 +12,10 @@ export default function DesignAlchemyLab() {
   const [selectedTubes, setSelectedTubes] = useState([]);
   const [pouring, setPouring] = useState(false);
 
-  // Use the Dropbox share URL the user provided but force raw=1 so the image is served directly.
-  // This is the only change: centralize the image URL and use raw=1 (forces Dropbox to serve the file contents).
-  const FLASK_IMAGE_URL = 'https://www.dropbox.com/scl/fi/va10tuo65cjz5c8bqo0b6/7132498a-34fb-4353-8126-118f04db6a57.jpg?rlkey=17x16l8wjn7irkdeqfg4o14vs&st=u428ab3v&raw=1';
+  // Updated: use a site-root path so Vite/CRA and Vercel will serve the static image.
+  // Place the image at: public/images/chemical-flasks.jpg
+  // If your uploaded file has spaces in the name, either rename it (recommended) or use the encoded path (/images/chemical%20flasks.jpg).
+  const FLASK_IMAGE_URL = '/images/chemical-flasks.jpg';
 
   const testTubes = [
     {
