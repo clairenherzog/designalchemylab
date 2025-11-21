@@ -12,14 +12,37 @@ export default function DesignAlchemyLab() {
   const [selectedTubes, setSelectedTubes] = useState([]);
   const [pouring, setPouring] = useState(false);
 
-  const FLASK_IMAGE_URL = '/images/chemical-flasks.jpg';
-
   const testTubes = [
-    { id: 'learnedness', name: 'Spirit of Eternal Learnedness', colors: ['#FFD700', '#FFA500', '#FF69B4', '#9370DB'], baseGlow: '#FFD700' },
-    { id: 'analytica', name: 'Elixir Analytica', colors: ['#00CED1', '#4169E1', '#9370DB', '#FF1493'], baseGlow: '#00CED1' },
-    { id: 'manyfaces', name: 'Substance of Many Faces', colors: ['#32CD32', '#FFD700', '#FF69B4', '#00CED1'], baseGlow: '#32CD32' },
-    { id: 'curiosa', name: 'Elixir Curiosa', colors: ['#FF69B4', '#FFD700', '#9370DB', '#00CED1'], baseGlow: '#FF69B4' },
-    { id: 'collaboration', name: 'Concoction of Collaboration', colors: ['#9370DB', '#4169E1', '#00CED1', '#32CD32'], baseGlow: '#9370DB' }
+    {
+      id: 'learnedness',
+      name: 'Spirit of Eternal Learnedness',
+      colors: ['#FFD700', '#FFA500', '#FF69B4', '#9370DB'],
+      baseGlow: '#FFD700'
+    },
+    {
+      id: 'analytica',
+      name: 'Elixir Analytica',
+      colors: ['#00CED1', '#4169E1', '#9370DB', '#FF1493'],
+      baseGlow: '#00CED1'
+    },
+    {
+      id: 'manyfaces',
+      name: 'Substance of Many Faces',
+      colors: ['#32CD32', '#FFD700', '#FF69B4', '#00CED1'],
+      baseGlow: '#32CD32'
+    },
+    {
+      id: 'curiosa',
+      name: 'Elixir Curiosa',
+      colors: ['#FF69B4', '#FFD700', '#9370DB', '#00CED1'],
+      baseGlow: '#FF69B4'
+    },
+    {
+      id: 'collaboration',
+      name: 'Concoction of Collaboration',
+      colors: ['#9370DB', '#4169E1', '#00CED1', '#32CD32'],
+      baseGlow: '#9370DB'
+    }
   ];
 
   const mixSequence = [
@@ -55,6 +78,7 @@ export default function DesignAlchemyLab() {
     }
   };
 
+  // Title fade in/out effect
   useEffect(() => {
     const interval = setInterval(() => {
       setTitleVisible(prev => !prev);
@@ -69,19 +93,29 @@ export default function DesignAlchemyLab() {
     return [];
   };
 
-  const isGlowing = (tubeId) => getActiveGlowingTubes().includes(tubeId);
-  const isDisabled = (tubeId) => !isGlowing(tubeId);
+  const isGlowing = (tubeId) => {
+    return getActiveGlowingTubes().includes(tubeId);
+  };
+
+  const isDisabled = (tubeId) => {
+    return !isGlowing(tubeId);
+  };
 
   const handleTubeClick = (tubeId) => {
     if (isDisabled(tubeId) || pouring) return;
+    
+    // Add to selected tubes
     const newSelected = [...selectedTubes, tubeId];
     setSelectedTubes(newSelected);
 
+    // If we have 2 tubes selected, pour them
     if (newSelected.length === 2) {
       setPouring(true);
+      
       setTimeout(() => {
         const mixKey = `${newSelected[0]}-${newSelected[1]}`;
         const result = mixResults[mixKey];
+        
         const newFlasks = [...flasks];
         newFlasks[currentFlask] = {
           filled: true,
@@ -89,6 +123,7 @@ export default function DesignAlchemyLab() {
           text: result.text,
           ingredients: newSelected
         };
+        
         setFlasks(newFlasks);
         setSelectedTubes([]);
         setCurrentFlask(currentFlask + 1);
@@ -98,104 +133,107 @@ export default function DesignAlchemyLab() {
   };
 
   const getCurrentInstructions = () => {
-    if (currentFlask === 0) return "Click the two glowing test tubes to pour them into the first flask!";
-    if (currentFlask === 1) return "Now mix the next two glowing elements into the second flask!";
-    if (currentFlask === 2) return "Final mix! Pour the glowing elements into the last flask!";
-    return "All potions created! See what happens when you combine different aspects of design.";
+    if (currentFlask === 0) {
+      return "Click the two glowing test tubes to pour them into the first flask!";
+    } else if (currentFlask === 1) {
+      return "Now mix the next two glowing elements into the second flask!";
+    } else if (currentFlask === 2) {
+      return "Final mix! Pour the glowing elements into the last flask!";
+    } else {
+      return "All potions created! See what happens when you combine different aspects of design.";
+    }
   };
-
-  const ConicalFlask = ({ flask, index, isActive, pouring }) => (
-    <div className="relative w-full h-full">
-      <img src={FLASK_IMAGE_URL} alt="Conical Flask" className="absolute inset-0 w-full h-full object-contain" crossOrigin="anonymous" />
-      {isActive && !flask.filled && !pouring && <div className="absolute inset-0 border-4 border-amber-400 rounded-lg animate-pulse"></div>}
-      {flask.filled && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-3/4 h-2/3 animate-in fade-in slide-in-from-bottom duration-1000"
-          style={{ background: flask.color, clipPath: 'polygon(30% 20%, 70% 20%, 100% 100%, 0% 100%)', opacity: 0.7 }}>
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/30 to-transparent animate-pulse"></div>
-        </div>
-      )}
-      {pouring && isActive && <div className="absolute inset-0 flex items-center justify-center"><div className="text-4xl animate-bounce">✨</div></div>}
-    </div>
-  );
-
-  const BeakerFlask = ({ flask, index, isActive, pouring }) => (
-    <div className="relative w-full h-full">
-      <img src={FLASK_IMAGE_URL} alt="Beaker" className="absolute inset-0 w-full h-full object-contain" crossOrigin="anonymous" />
-      {isActive && !flask.filled && !pouring && <div className="absolute inset-0 border-4 border-amber-400 rounded-lg animate-pulse"></div>}
-      {flask.filled && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-4/5 h-3/4 animate-in fade-in slide-in-from-bottom duration-1000"
-          style={{ background: flask.color, clipPath: 'polygon(8% 0%, 92% 0%, 95% 100%, 5% 100%)', opacity: 0.7 }}>
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/30 to-transparent animate-pulse"></div>
-        </div>
-      )}
-      {pouring && isActive && <div className="absolute inset-0 flex items-center justify-center"><div className="text-4xl animate-bounce">✨</div></div>}
-    </div>
-  );
-
-  const RoundFlask = ({ flask, index, isActive, pouring }) => (
-    <div className="relative w-full h-full">
-      <img src={FLASK_IMAGE_URL} alt="Round Bottom Flask" className="absolute inset-0 w-full h-full object-contain" crossOrigin="anonymous" />
-      {flask.filled && (
-        <svg viewBox="0 0 200 300" className="absolute inset-0 w-full h-full animate-in fade-in slide-in-from-bottom duration-1000" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id={`liquidGrad3${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={flask.color.includes('gradient') ? '#32CD32' : flask.color} stopOpacity="0.7" />
-              <stop offset="100%" stopColor={flask.color.includes('gradient') ? '#00CED1' : flask.color} stopOpacity="0.9" />
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="200" r="75" fill={`url(#liquidGrad3${index})`} opacity="0.8" />
-        </svg>
-      )}
-      {pouring && isActive && <div className="absolute inset-0 flex items-center justify-center"><div className="text-4xl animate-bounce">✨</div></div>}
-    </div>
-  );
 
   return (
     <div className="min-h-screen p-8 overflow-hidden relative">
-      <div className="absolute inset-0 opacity-90" style={{
-        backgroundImage: `linear-gradient(to right, #a5b4fc 1px, transparent 1px), linear-gradient(to bottom, #a5b4fc 1px, transparent 1px)`,
-        backgroundSize: '20px 20px',
-        backgroundColor: '#f8fafc'
-      }} />
+      {/* Grid paper background */}
+      <div 
+        className="absolute inset-0 opacity-90"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, #a5b4fc 1px, transparent 1px),
+            linear-gradient(to bottom, #a5b4fc 1px, transparent 1px)
+          `,
+          backgroundSize: '20px 20px',
+          backgroundColor: '#f8fafc'
+        }}
+      />
 
       <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Title - Fades in and out */}
         <div className="text-center mb-16">
-          <h1 className={`text-7xl font-black text-gray-900 tracking-tight transition-opacity duration-1000 ${titleVisible ? 'opacity-100' : 'opacity-30'}`}>
+          <h1 
+            className={`text-7xl font-black text-gray-900 tracking-tight transition-opacity duration-1000 ${
+              titleVisible ? 'opacity-100' : 'opacity-30'
+            }`}
+          >
             Welcome to Design Alchemy!
           </h1>
         </div>
 
+        {/* Chemical Flasks Section */}
         <div className="mb-12">
           <div className="flex items-center justify-center mb-6">
             <ArrowDown className="w-8 h-8 text-gray-700 animate-bounce" />
             <span className="ml-2 text-2xl font-bold text-gray-800">Potions</span>
             <ArrowDown className="w-8 h-8 text-gray-700 animate-bounce ml-2" />
           </div>
-
+          
           <div className="flex justify-center gap-12">
-            {flasks.map((flask, index) => {
-              const flaskType = index === 0 ? 'conical' : index === 1 ? 'beaker' : 'round';
-              const isActive = index === currentFlask;
-              return (
-                <div key={index} className="relative">
-                  <div className={`relative transition-all duration-500 ${isActive && !pouring ? 'scale-110' : 'scale-100'} ${flaskType === 'conical' ? 'w-48 h-72' : flaskType === 'beaker' ? 'w-40 h-64' : 'w-48 h-72'}`}>
-                    {flaskType === 'conical' && <ConicalFlask flask={flask} index={index} isActive={isActive} pouring={pouring} />}
-                    {flaskType === 'beaker' && <BeakerFlask flask={flask} index={index} isActive={isActive} pouring={pouring} />}
-                    {flaskType === 'round' && <RoundFlask flask={flask} index={index} isActive={isActive} pouring={pouring} />}
-                  </div>
+            {flasks.map((flask, index) => (
+              <div key={index} className="relative">
+                {/* Flask */}
+                <div className={`relative w-48 h-64 transition-all duration-500 ${
+                  index === currentFlask && !pouring ? 'scale-110' : 'scale-100'
+                }`}>
+                  {/* Flask neck */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-16 bg-gradient-to-b from-white/80 to-white/60 rounded-t-lg border-2 border-gray-300 backdrop-blur-sm shadow-lg"></div>
+                  
+                  {/* Flask body */}
+                  <div className="absolute top-14 w-full h-48 bg-gradient-to-br from-white/70 via-white/50 to-white/40 rounded-b-full border-4 border-gray-300 backdrop-blur-sm shadow-2xl overflow-hidden">
+                    {/* Glass shine effect */}
+                    <div className="absolute top-4 left-4 w-16 h-24 bg-gradient-to-br from-white/90 to-transparent rounded-full blur-sm"></div>
+                    
+                    {/* Active flask indicator */}
+                    {index === currentFlask && !flask.filled && !pouring && (
+                      <div className="absolute inset-0 rounded-b-full border-4 border-amber-400 animate-pulse"></div>
+                    )}
+                    
+                    {/* Liquid */}
+                    {flask.filled && (
+                      <div 
+                        className="absolute bottom-0 w-full h-full rounded-b-full animate-in fade-in slide-in-from-bottom duration-1000"
+                        style={{
+                          background: flask.color
+                        }}
+                      >
+                        {/* Liquid shimmer */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/20 to-transparent animate-pulse"></div>
+                      </div>
+                    )}
 
-                  {flask.filled && flask.text && (
-                    <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-80 p-4 bg-white rounded-2xl shadow-xl border-2 border-gray-300 animate-in fade-in slide-in-from-top duration-700 delay-500">
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-white border-l-2 border-t-2 border-gray-300 rotate-45"></div>
-                      <p className="text-sm text-gray-800 leading-relaxed">{flask.text}</p>
-                    </div>
-                  )}
+                    {/* Pouring animation */}
+                    {pouring && index === currentFlask && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-4xl animate-bounce">✨</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
+
+                {/* Text bubble */}
+                {flask.filled && flask.text && (
+                  <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-80 p-4 bg-white rounded-2xl shadow-xl border-2 border-gray-300 animate-in fade-in slide-in-from-top duration-700 delay-500">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 bg-white border-l-2 border-t-2 border-gray-300 rotate-45"></div>
+                    <p className="text-sm text-gray-800 leading-relaxed">{flask.text}</p>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
+        {/* Test Tubes Section */}
         <div className="mt-80 pt-12">
           <div className="flex items-center justify-center mb-6">
             <ArrowDown className="w-8 h-8 text-gray-700 animate-bounce" />
@@ -208,46 +246,76 @@ export default function DesignAlchemyLab() {
               const glowing = isGlowing(tube.id);
               const disabled = isDisabled(tube.id);
               const selected = selectedTubes.includes(tube.id);
-
+              
               return (
                 <div key={tube.id} className="flex flex-col items-center">
+                  {/* Test tube */}
                   <button
                     onClick={() => handleTubeClick(tube.id)}
                     disabled={disabled || pouring}
-                    className={`relative w-20 h-48 transition-all duration-500 ${glowing ? 'scale-110 cursor-pointer' : 'scale-100'} ${disabled ? 'opacity-40 cursor-not-allowed' : ''} ${selected ? 'scale-95' : ''}`}
+                    className={`relative w-20 h-48 transition-all duration-500 ${
+                      glowing ? 'scale-110 cursor-pointer' : 'scale-100'
+                    } ${
+                      disabled ? 'opacity-40 cursor-not-allowed' : ''
+                    } ${
+                      selected ? 'scale-95' : ''
+                    }`}
                   >
+                    {/* Tube body */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-white/30 rounded-b-3xl rounded-t-lg border-3 border-gray-300 backdrop-blur-sm shadow-xl overflow-hidden">
+                      {/* Glass shine */}
                       <div className="absolute top-2 left-2 w-6 h-20 bg-gradient-to-br from-white/80 to-transparent rounded-full blur-sm"></div>
-
-                      <div className={`absolute bottom-0 w-full rounded-b-3xl overflow-hidden transition-all duration-500 ${selected ? 'h-12' : 'h-36'}`}>
-                        <div className="absolute inset-0 animate-pulse" style={{
-                          background: `linear-gradient(135deg, ${tube.colors.join(', ')})`,
-                          animation: 'swirl 4s ease-in-out infinite'
-                        }}>
+                      
+                      {/* Bioluminescent substance */}
+                      <div className={`absolute bottom-0 w-full rounded-b-3xl overflow-hidden transition-all duration-500 ${
+                        selected ? 'h-12' : 'h-36'
+                      }`}>
+                        <div 
+                          className="absolute inset-0 animate-pulse"
+                          style={{
+                            background: `linear-gradient(135deg, ${tube.colors.join(', ')})`,
+                            animation: 'swirl 4s ease-in-out infinite'
+                          }}
+                        >
+                          {/* Swirling effect */}
                           <div className="absolute inset-0 opacity-60" style={{
-                            background: `radial-gradient(circle at 30% 50%, ${tube.colors[0]} 0%, transparent 50%), radial-gradient(circle at 70% 50%, ${tube.colors[1]} 0%, transparent 50%)`,
+                            background: `radial-gradient(circle at 30% 50%, ${tube.colors[0]} 0%, transparent 50%),
+                                        radial-gradient(circle at 70% 50%, ${tube.colors[1]} 0%, transparent 50%)`,
                             animation: 'rotate 6s linear infinite'
                           }}></div>
                         </div>
-
+                        
+                        {/* Glow effect */}
                         <div className="absolute inset-0 bg-gradient-to-t from-white/30 to-transparent animate-pulse"></div>
                       </div>
                     </div>
 
+                    {/* Outer glow when active */}
                     {glowing && !disabled && (
-                      <div className="absolute inset-0 rounded-b-3xl rounded-t-lg animate-pulse pointer-events-none" style={{
-                        boxShadow: `0 0 30px ${tube.baseGlow}, 0 0 60px ${tube.baseGlow}`,
-                        animation: 'glow 1.5s ease-in-out infinite'
-                      }}></div>
+                      <div 
+                        className="absolute inset-0 rounded-b-3xl rounded-t-lg animate-pulse pointer-events-none"
+                        style={{
+                          boxShadow: `0 0 30px ${tube.baseGlow}, 0 0 60px ${tube.baseGlow}`,
+                          animation: 'glow 1.5s ease-in-out infinite'
+                        }}
+                      ></div>
                     )}
 
+                    {/* Selected indicator */}
                     {selected && (
-                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">✓</div>
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        ✓
+                      </div>
                     )}
                   </button>
 
+                  {/* Label */}
                   <div className="mt-4 text-center max-w-[120px]">
-                    <p className={`text-xs font-bold text-gray-800 transition-all duration-300 ${glowing ? 'scale-110 text-amber-600' : ''}`}>{tube.name}</p>
+                    <p className={`text-xs font-bold text-gray-800 transition-all duration-300 ${
+                      glowing ? 'scale-110 text-amber-600' : ''
+                    }`}>
+                      {tube.name}
+                    </p>
                   </div>
                 </div>
               );
@@ -255,19 +323,46 @@ export default function DesignAlchemyLab() {
           </div>
         </div>
 
+        {/* Instructions */}
         <div className="mt-16 text-center">
-          <p className="text-2xl font-bold text-gray-800 bg-white/80 backdrop-blur-sm px-8 py-4 rounded-full inline-block shadow-lg">{getCurrentInstructions()}</p>
-          {selectedTubes.length === 1 && <p className="text-lg text-gray-600 mt-4">Select one more glowing element to complete the mix!</p>}
+          <p className="text-2xl font-bold text-gray-800 bg-white/80 backdrop-blur-sm px-8 py-4 rounded-full inline-block shadow-lg">
+            {getCurrentInstructions()}
+          </p>
+          {selectedTubes.length === 1 && (
+            <p className="text-lg text-gray-600 mt-4">
+              Select one more glowing element to complete the mix!
+            </p>
+          )}
         </div>
       </div>
 
-      <style>{`
+      <style jsx>{`
         @keyframes swirl {
-          0%, 100% { transform: rotate(0deg) scale(1); }
-          50% { transform: rotate(180deg) scale(1.1); }
+          0%, 100% {
+            transform: rotate(0deg) scale(1);
+          }
+          50% {
+            transform: rotate(180deg) scale(1.1);
+          }
         }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        @keyframes rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes glow {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
       `}</style>
     </div>
   );
