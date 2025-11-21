@@ -49,3 +49,16 @@ root.render(
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+const root = createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <div style={{ position: 'fixed', top: 12, left: 12, zIndex: 9999, background: '#fff', padding: '6px 10px', borderRadius: 8, boxShadow: '0 2px 10px rgba(0,0,0,0.08)', fontSize: 13 }}>
+      DEBUG: React mounted (main.jsx)
+    </div>
+
+    <ErrorBoundary>
+      <DesignAlchemyLab />
+    </ErrorBoundary>
+  </React.StrictMode>
+);
